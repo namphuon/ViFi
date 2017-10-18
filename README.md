@@ -32,7 +32,7 @@ tar zxf data_repo.tar.gz
 echo export AA_DATA_REPO=$PWD/data_repo >> ~/.bashrc
 source ~/.bashrc
 
-## Download the HMM models from https://drive.google.com/file/d/0Bzp6XgpBhhghRWRsczVOZy1yQ2c/view?usp=sharing
+## Download the HMM models from https://drive.google.com/open?id=0Bzp6XgpBhhghSTNMd3RWS2VsVXM 
 unzip data.zip
 echo export REFERENCE_REPO=$PWD/data/ >> ~/.bashrc
 
