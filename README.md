@@ -2,7 +2,7 @@
 
 ViFi is a tool for detecting viral integration and fusion mRNA sequences from Next Generation Sequencing data.  Unlike standard approaches that use reference-based read mapping for identification of viral reads, ViFi uses both reference-based read mapping and a phylogenetic-based approach to identify viral reads.  ViFi also incorporates mappability scores of the reads to filter out false positive integration detection.  The end result is a tool that can accurately and precisely detect integrated viruses, even if the viruses are highly mutated or novel strains.
 
-ViFi is currently in alpha testing, so please report any problems/bugs to Nam Nguyen (ndn006@eng.ucsd.edu) so that it can be quickly corrected.  
+ViFi is currently in alpha testing, is is constantly undergoing revisions.  High on the priority list is an easier installation process, as well as improve user interface.  Please report any problems/bugs to Nam Nguyen (ndn006@eng.ucsd.edu) so that ViFi can be improved and problems can be quickly corrected.  
 
 #=============================================================================================================================================================================================
 
@@ -15,7 +15,15 @@ git clone https://github.com/namphuon/ViFi.git
 ## 1) Python 2.7
 ## 2) Pysam verion 0.9.0 or higher (https://github.com/pysam-developers/pysam):
 sudo pip install pysam
+## 3) Samtools 1.3.1 or higher (www.htslib.org/)
+sudo apt-get install samtools
+## 4) BWA 0.7.15 or higher (bio-bwa.sourceforge.net/)
+sudo apt-get install bwa
+## 5) Install HMMER and have it on the path
 
+
+# Set the ViFi directory
+echo export VIFI_DIR=/path/to/ViFi >> ~/.bashrc
 
 # Data repositories:
 ## Download the data repositories. While we include some annotations, we are unable to host some large files in the git repository.
@@ -26,20 +34,14 @@ source ~/.bashrc
 
 ## Download the HMM models from https://drive.google.com/file/d/0Bzp6XgpBhhghRWRsczVOZy1yQ2c/view?usp=sharing
 unzip data.zip
-echo export HMM_REPO=$PWD/data/ >> ~/.bashrc
+echo export REFERENCE_REPO=$PWD/data/ >> ~/.bashrc
+
+## For viral family of interest, create BWA index.  Example for HPV is given below
+cat $AA_DATA_REPO//hg19/hg19full.fa $REFERENCE_REPO/hpv/hpv.unaligned.fas > $REFERENCE_REPO/hpv/hg19_hpv.fas
+bwa index $REFERENCE_REPO/hpv/hg19_hpv.fas
+
+## Running ViFi
+python run_vifi.py -f <input_R1.fq.gz> -r <input_R2.fq.gz> -o <output_dir>
 
 The ViFi manuscript is currently under review.
-
-
-docker run --rm -it ubuntu
-apt-get update
-apt-get -y install build-essential checkinstall
-apt-get -y install libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev
-apt-get -y install python2.7
-alias python=python2.7
-
-apt-get -y install python-setuptools python-dev build-essential 
-apt-get -y install python-pip python-dev build-essential 
-pip install pysam
-apt-get -y install git-all
 
