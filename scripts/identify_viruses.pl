@@ -11,15 +11,15 @@ use LWP::Simple;    #use Math::Random::Zipf;
 use phylo;
 use Getopt::Long qw(:config no_ignore_case);
 
-my $dir = "$SCRATCH/data/TCGA-CESC/ef574f7b-2b69-4be8-83f3-cc02df579a0a/";
+my $dir = "";
 
 my $Usage = "Usage: $0 -p prefix -b bamfile -t threads -d directory -H hmm_list\n";
 my %hmms = ();
 my %opt = (bamfile => "",
   thread => 24,
-  thread_per_job => 2,  
-  dir => "$SCRATCH/results/TCGA-CESC/ef574f7b-2b69-4be8-83f3-cc02df579a0a/",
-  hmm_list => "$WORK/data/references/hpv/hmms/list.txt",
+  thread_per_job => 1,  
+  dir => "",
+  hmm_list => "",
   prefix => "test" );
   GetOptions(\%opt, "bamfile|b=s", "dir|d:s", "thread|t:i", 'prefix|p=s', 'thread_per_job|j:i', 'hmm_list|H=s','debug:s');
 
@@ -134,114 +134,6 @@ sub run_hmms {
       `mv $temp_file $opt{dir}/temp/$key.hmm_search`;
     }
   }
-}
-
-#Need to find way to ID the strain to match against
-sub find_strain {
-  #Start by assembling all reads
-  if (-e "$opt{dir}/temp/$opt{prefix}_R2.fastq.gz" and -s "$opt{dir}/temp/$opt{prefix}_R2.fastq.gz" == 0) {
-    return;
-  }
-  if (not -e "$opt{dir}/temp/contigs.fas.renamed" and -e "$opt{dir}/temp/$opt{prefix}_R2.fastq.gz") {
-    print "Running Abyss\n";
-    `ABYSS -k23 -o$opt{dir}/temp/contigs.fas $opt{dir}/temp/$opt{prefix}_R1.fastq.gz $opt{dir}/temp/$opt{prefix}_R2.fastq.gz`;    
-    if (not -e "$opt{dir}/temp/contigs.fas" or -s "$opt{dir}/temp/contigs.fas" == 0) {
-      print "Failed to assemble any contigs\n";
-      return;
-    }
-    my %reads = %{Phylo::read_fasta_file("$opt{dir}/temp/contigs.fas",0)};
-    open(OUTPUT,">$opt{dir}/temp/contigs.fas.renamed");
-    my $idx = -1;
-    foreach my $key (sort keys %reads) {
-      if (length($reads{$key}) < 150) {
-        next;
-      }    
-      $idx++;
-      print OUTPUT ">$opt{prefix}_$idx\_F\n$reads{$key}\n";
-      my $rev_comp = reverse $reads{$key};
-      $rev_comp =~ tr/ACGTacgt/TGCAtgca/;
-      print OUTPUT ">$opt{prefix}_$idx\_R\n$rev_comp\n";            
-    }
-    close(OUTPUT);        
-  }
-  
-  if (not -e "$opt{dir}/temp/viral.fastq.bwa") {
-    my $temp_file = Phylo::get_temp_file();
-    `/usr/bin/time -v -o $opt{dir}/logs/human.bwa.time bwa mem -t $opt{thread} $opt{human_reference} $opt{dir}/temp/$opt{prefix}_R1.fastq.gz $opt{dir}/temp/$opt{prefix}_R2.fastq.gz > $temp_file`;    
-    `mv $temp_file $opt{dir}/temp/human.fastq.bwa`;
-    `/usr/bin/time -v -o $opt{dir}/logs/human.bwa.time bwa mem -t $opt{thread} $opt{viral_reference} $opt{dir}/temp/$opt{prefix}_R1.fastq.gz $opt{dir}/temp/$opt{prefix}_R2.fastq.gz > $temp_file`;    
-    `mv $temp_file $opt{dir}/temp/viral.fastq.bwa`;
-  }  
-  
-  
-  if (-e "$opt{dir}/temp/contigs.fas.renamed" and -s "$opt{dir}/temp/contigs.fas.renamed" == 0) {
-    return;
-  }
-
-  #Start by scoring all contigs against all HMMs, select longest with highest score
-  my %jobs = ();
-  foreach my $hmm (sort keys %hmms) {
-    my $key = "$hmm.contig";
-    if (not -e "$opt{dir}/temp/$key.hmm_search.strain") {
-      $jobs{$key} = ['hmm', "$hmms{$hmm}", "result", "$opt{dir}/temp/$key.hmm_search.strain", 'key', $key, "file", "$opt{dir}/temp/contigs.fas.renamed",'thread', $opt{thread_per_job}];
-    }
-  }  
-  job_pool(\%jobs,new Worker({'function',\&hmm_worker,'name','HmmSearch(Strains)','threads_per_job',$opt{thread_per_job}}));
-    
-  if (not -e "$opt{dir}/temp/strains.csv") {
-    my @files = <$opt{dir}/temp/*.hmm_search.strain>;
-    %jobs = ();
-    foreach my $file (@files) {
-      $file =~ m/(\d+)\.contig\.hmm_search/;
-      my $hmm = $1;
-      $jobs{"$hmm"} = ["hmm_search", $file, "hmm_csv", "$file.csv", "subset", "strain", "hmm", $hmm];
-    }
-  
-    my %reduced :shared;  
-    job_pool(\%jobs,new Worker({'function',\&read_hmms_worker,'name','read_hmms','threads_per_job', 1, "process", \&reduce_results, "results", \%reduced}));
-    open(OUTPUT, ">$opt{dir}/temp/strains.csv");
-    local $" = ",";
-    foreach my $key (keys %reduced) {
-      print OUTPUT "$key,@{$reduced{$key}}\n";
-    }
-    close(OUTPUT);
-  }
-  if (not -e "$opt{dir}/temp/strains.fas" or -s "$opt{dir}/temp/strains.fas" == 0) {
-    my $scores = read_scores("$opt{dir}/temp/strains.csv", "combined");
-    my %reads = %{Phylo::read_fasta_file("$opt{dir}/temp/contigs.fas.renamed",0)};
-  
-    foreach my $read (keys %reads) {
-      $read =~ m/(.*)_([A-Z]+)$/;
-      my $name = $1;
-      if (not defined $scores->{$name} or  $scores->{$name}->[0] ne $read) {
-        delete $reads{$read};
-        next;
-      }
-      if (length($reads{$read}) < 100 or $scores->{$name}->[1] > 1e-9) {
-        delete $reads{$read};          
-      }
-    }        
-    Phylo::write_alignment(\%reads, "$opt{dir}/temp/strains.fas");    
-  }
-    
-  if (not -e "$opt{dir}/temp/strains.fas" or -s "$opt{dir}/temp/strains.fas" == 0) {
-    print "Unable to find contigs that are viral\n";
-    return;
-  }
-  
-  if (not -e "$opt{dir}/upp_alignment.fasta") {
-    my $temp_dir = Phylo::get_temp_file();
-    `/usr/bin/time -v -o $opt{dir}/logs/upp.time python $WORK/programs/sepp/run_upp.py -A 10 -t $opt{tree} -a $opt{alignment} -m dna -c ~/.sepp/hmm.config -s $opt{dir}/temp/strains.fas -x 24 -o upp -d $opt{dir}/ -p $temp_dir > $opt{dir}/logs/log.upp 2>&1`;          
-    `rm $temp_dir -rf`;
-  }
-  if (not -e "$opt{dir}/upp_alignment_masked.jplace") {
-    chdir($opt{dir});
-    `/usr/bin/time -v -o $opt{dir}/logs/pplacer.time pplacer -t $opt{tree} -s $opt{raxml_info} upp_alignment_masked.fasta -j $opt{thread}`;
-    `guppy fat upp_alignment_masked.jplace`;
-    `python $WORK/bin/python/viral.py -a find_fattest_leaf -j upp_alignment_masked.xml -o fattest.csv`;
-  }  
-  
-  return;
 }
 
 sub convert_search_into_scores {

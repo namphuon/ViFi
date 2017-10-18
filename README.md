@@ -19,7 +19,7 @@ sudo pip install pysam
 sudo apt-get install samtools
 ## 4) BWA 0.7.15 or higher (bio-bwa.sourceforge.net/)
 sudo apt-get install bwa
-## 5) Install HMMER and have it on the path
+## 5) Install HMMER v3.1b2 and have it on the path (http://eddylab.org/software/hmmer3/3.1b2/hmmer-3.1b2-macosx-intel.tar.gz)
 
 
 # Set the ViFi directory
