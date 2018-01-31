@@ -96,7 +96,9 @@ segdup_filename = DATA_REPO + '/' + REF + '/' + REF_files['segdup_filename']
 complementary_nucleotide = defaultdict(lambda: 'N', {'A':'T', 'C':'G', 'G':'C', 'T':'A', 'a':'t', 'c':'g', 'g':'c', 't':'a', 'n':'n', 'N':'N'})
 duke35 = []
 duke35_exists = [True]
-
+CHR_PREFIX = True
+if REF == 'hg18' or REF == 'hg19':
+  CHR_PREFIX = True
 # Handling chromosome names, lengths, sorting, positions and addition of new chromosomes
 
 chr_id = {}
@@ -338,6 +340,7 @@ class interval(object):
         return False
 
     def rep_content(self):
+        global duke35
         # logging.info("#TIME " + '%.3f\t'%clock() + " rep_content: init ")
         if self.chrom == 'chrM' or self.chrom == 'MT':
             return 5.0
@@ -348,7 +351,11 @@ class interval(object):
         if duke35_exists[0] and len(duke35) == 0:
             try:
                 duke35file = open(duke35_filename)
-                duke35.extend([l.strip() for l in duke35file])
+                duke35.extend([interval(l.strip()) for l in duke35file])
+                if CHR_PREFIX == True:
+                  for d in duke35:
+                    d.chrom = 'chr%s' % d.chrom if d.chrom.find('chr') == -1 else d.chrom
+                duke35.sort()
                 duke35file.close()
             except:
                 logging.warning("#TIME " + '%.3f\t'%clock() + " rep_content: Unable to open mapability file \"" + duke35_filename + "\"." )
@@ -364,7 +371,7 @@ class interval(object):
             numiter += 1
             p = (hi + lo) / 2
             ctime = clock()
-            m = interval(duke35[p])
+            m = duke35[p]
             ictime += clock() - ctime
             ctime = clock()
             if s34.intersects(m) or m > s34:
@@ -373,7 +380,7 @@ class interval(object):
                 lo = p
             itime += clock() - ctime
         p = lo
-        m = interval(duke35[p])
+        m = duke35[p]
         sum_duke = 0
         len_duke = 0
         # logging.info("#TIME " + '%.3f\t'%clock() + " rep_content: found " + str(numiter) + " " + str(ictime) + " " + str(itime))
@@ -381,8 +388,8 @@ class interval(object):
             if not s34.intersects(m):
                 p += 1
                 if p >= len(duke35) or p <= 0:
-                    raise Exception('p index out of range: ' + str(p)+' '+str(lo)+' '+str(self)+' '+str(m) + ' '+str(interval(duke35[lo])))
-                m = interval(duke35[p])
+                    raise Exception('p index out of range: ' + str(p)+' '+str(lo)+' '+str(self)+' '+str(m) + ' '+str(duke35[lo]))
+                m = duke35[p]
                 continue
             repc = 5.0 if float(m.info[0]) == 0 else 1.0 / float(m.info[0])
             sum_duke += s34.intersection(m).size() * repc
@@ -390,7 +397,7 @@ class interval(object):
             p += 1
             if p >= len(duke35):
                 break
-            m = interval(duke35[p])
+            m = duke35[p]
         # logging.info("#TIME " + '%.3f\t'%clock() + " rep_content: done")
         # exit()
         if len_duke > 0:
@@ -576,6 +583,8 @@ class interval_list(list, object):
             for line in duke35_file:
                 lno += 1
                 duke_int = interval(line)
+                if CHR_PREFIX == True:
+                  duke_int.chrom = 'chr%s' % duke_int.chrom if duke_int.chrom.find('chr') == -1 else duke_int.chrom
                 while not(duke_int.intersects(self[i])) and duke_int > self[i]:
                     i += 1
                 if not duke_int.intersects(self[i]) and self[i] > duke_int:
