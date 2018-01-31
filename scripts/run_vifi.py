@@ -34,7 +34,7 @@ if __name__ == '__main__':
   
   #Run BWA on input FASTQ files
   print "[Running BWA]: %f" % (time.time()-start_time)
-  os.system("bwa mem -t %d -M %s/data/%s/hg19_%s.fas %s %s | samtools view -bS - > %s/hg19_%s.bam" % (options.cpus, vifi_dir, virus, options.virus, options.forward, options.reverse, options.output_dir, options.virus))
+  os.system("bwa mem -t %d -M %s/data/%s/hg19_%s.fas %s %s | samtools view -bS - > %s/hg19_%s.bam" % (options.cpus, reference_dir, virus, options.virus, options.forward, options.reverse, options.output_dir, options.virus))
   print "[Finished BWA]: %f" % (time.time()-start_time)
   
   

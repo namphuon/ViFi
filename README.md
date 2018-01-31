@@ -45,3 +45,13 @@ python run_vifi.py -f <input_R1.fq.gz> -r <input_R2.fq.gz> -o <output_dir>
 
 The ViFi manuscript is currently under review.
 
+## Dockerized ViFi
+
+We have also created a dockerized version of ViFi to enable easier time running.  The docker version of ViFi can be obtained
+by installing Docker (https://www.docker.com/), and running the following command:
+docker pull us.gcr.io/aa-test-175718/vifi
+
+To run the dockerized version of ViFi, run the following script in the ViFi scripts directory:
+
+docker_vifi.sh <READ1> <READ2> <OUTPUT>
+
