@@ -46,7 +46,7 @@ if __name__ == '__main__':
 
   #Run HMMs
   print "[Running HMMS]: %f" % (time.time()-start_time)
-  os.system("ls %s/%s/hmms/*.hmm > hmms.txt" % (reference_dir, virus))
+  os.system("ls %s/data/%s/hmms/*.hmm > hmms.txt" % (reference_dir, virus))
   if not os.path.exists('%s/test/' % options.output_dir):
     os.mkdir('%s/test/' % options.output_dir)
   os.system("perl -I %s/lib %s/scripts/identify_viruses.pl -t %d -b hg19_%s.unknown.bam -d %s/tmp -H hmms.txt" % (vifi_dir, vifi_dir, options.cpus, virus, options.output_dir))
