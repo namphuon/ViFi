@@ -48,13 +48,13 @@ if __name__ == '__main__':
   print "[Running HMMS]: %f" % (time.time()-start_time)
   os.system("ls %s/data/%s/hmms/*.hmm > hmms.txt" % (reference_dir, virus))
   if not os.path.exists('%s/test/' % options.output_dir):
-    os.mkdir('%s/test/' % options.output_dir)
+    os.mkdir('%s/test/' % options.output_dir)  
   os.system("perl -I %s/lib %s/scripts/identify_viruses.pl -t %d -b hg19_%s.unknown.bam -d %s/tmp -H hmms.txt" % (vifi_dir, vifi_dir, options.cpus, virus, options.output_dir))
   print "[Finished running HMMS]: %f" % (time.time()-start_time)
   
   #Cluster reads
   print "[Cluster and identify integration points]: %f" % (time.time()-start_time)
-  os.system("python %s/scripts/merge_viral_reads.py --unknown hg19_%s.unknown.bam --trans hg19_%s.trans.bam --reduced test/temp/reduced.csv --map test/temp/unmapped.map --output hg19_%s.fixed.trans.bam" % (vifi_dir, virus, virus, virus))
+  os.system("python %s/scripts/merge_viral_reads.py --unknown hg19_%s.unknown.bam --trans hg19_%s.trans.bam --reduced tmp/temp/reduced.csv --map tmp/temp/unmapped.map --output hg19_%s.fixed.trans.bam" % (vifi_dir, virus, virus, virus))
   os.system("samtools sort -m 2G -@ %d hg19_%s.fixed.trans.bam > hg19_%s.fixed.trans.cs.bam" % (options.cpus, virus, virus))
   os.system("samtools sort -m 2G -@ %d hg19_%s.viral.bam > hg19_%s.viral.cs.bam" % (options.cpus, virus, virus))
   os.system("samtools index hg19_%s.fixed.trans.cs.bam" % virus)

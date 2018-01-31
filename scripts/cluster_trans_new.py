@@ -23,8 +23,6 @@ args = parser.parse_args()
 bamFile = pysam.Samfile(args.dataName[0], 'rb')
 outFile = open(args.outputName[0], 'w')
 rangeFile = open(args.outputName[0] + ".range", 'w')
-hg19faFile = open("/pedigree/projects/extrachromosome/data_repo/hg19/hg19full.fa")
-
 hg19refs = Set(map(lambda x: 'chr' + str(x), range(1,23) + ['X', 'Y', 'M']) + map(str, range(1,23) +  ['X', 'Y']))
 
 MIN_SUPPORT = 3
