@@ -49,9 +49,22 @@ The ViFi manuscript is currently under review.
 
 We have also created a dockerized version of ViFi to enable easier time running.  The docker version of ViFi can be obtained
 by installing Docker (https://www.docker.com/), and running the following command:
-docker pull us.gcr.io/aa-test-175718/vifi
 
-To run the dockerized version of ViFi, run the following script in the ViFi scripts directory:
+docker pull namphuon/vifi
 
-docker_vifi.sh <READ1> <READ2> <OUTPUT>
+To run the dockerized version of ViFi, first create the data repositories as above, including setting the environmental variables. 
+Next, run the following script in the ViFi scripts directory:
+
+docker_vifi.sh <INPUT_DIR> <READ1> <READ2> <OUTPUT> <CPUS>
+
+where <INPUT_DIR> is the directory containing the <READ1> and <READ2> files, and <CPUS> is the number of
+CPUs to use.  Note that the full path must
+be given for the input and output directory, and the $AA_DATA_REPO and $REFERENCE_REPO variables must be
+set in order for the script to find the necessary files.  
+
+Example:
+
+If /home/input/ contains read1.fastq.gz and read2.fastq.gz, then
+
+sh docker_vifi.sh /home/input read1.fastq.gz read2.fastq.gz /home/output/ 2
 
