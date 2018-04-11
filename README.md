@@ -53,7 +53,7 @@ docker pull namphuon/vifi
 To run the dockerized version of ViFi, first create the data repositories as above, including setting the environmental variables. 
 Next, run the following script in the ViFi scripts directory:
 
-docker_vifi.sh <INPUT_DIR>  <READ1>  <READ2>  <OUTPUT>  <CPUS> asdfasf
+`docker_vifi.sh <INPUT_DIR> <READ1>  <READ2>  <OUTPUT>  <CPUS>` 
 
 where <INPUT_DIR> is the directory containing the <READ1> and <READ2> files, and <CPUS> is the number of
 CPUs to use.  Note that the full path must
