@@ -91,7 +91,7 @@ sh docker_vifi.sh /home/input read1.fastq.gz read2.fastq.gz /home/output/ 2
 
 1. Nguyen ND, Deshpande V, Luebeck J, Mischel PS, Bafna V (2018) ViFi: accurate detection of viral integration and mRNA fusion reveals indiscriminate and unregulated transcription in proximal genomic regions in cervical cancer. Nucleic Acids Res (April):1–17.
 
-# [Advanced Notes](#advanced_notes)
+# [Advanced Notes](/#advanced_notes)
 
 ## Building evolutionary models
 
