@@ -8,32 +8,32 @@ ViFi is currently in alpha testing, is is constantly undergoing revisions.  High
 ## Installation:
 We provide instructions for installing ViFi on Linux below.  
 
-1) ViFi download (if you have not already cloned this source code):
+1. ViFi download (if you have not already cloned this source code):
 ```
 git clone https://github.com/namphuon/ViFi.git
 ```
-2) Install Dependencies:
- 1) Python 2.7
+2. Install Dependencies:
+   1. Python 2.7
 ```
  sudo dnf install python2
 ```
- 2) Pysam verion 0.9.0 or higher (https://github.com/pysam-developers/pysam):
+   2. Pysam verion 0.9.0 or higher (https://github.com/pysam-developers/pysam):
 ```
  sudo pip install pysam
 ```
- 3) Samtools 1.3.1 or higher (www.htslib.org/)
+   3. Samtools 1.3.1 or higher (www.htslib.org/)
 ```
  sudo apt-get install samtools
 ```
- 4) BWA 0.7.15 or higher (bio-bwa.sourceforge.net/)
+   4. BWA 0.7.15 or higher (bio-bwa.sourceforge.net/)
 ```
  sudo apt-get install bwa
 ```
- 5) Install HMMER v3.1b2 and have it on the path (http://hmmer.org/)
+   5. Install HMMER v3.1b2 and have it on the path (http://hmmer.org/)
 ```
  sudo apt-get install hmmer
 ```
-3) Set the ViFi directory
+3. Set the ViFi directory
 ```
 echo export VIFI_DIR=/path/to/ViFi >> ~/.bashrc
 ```
