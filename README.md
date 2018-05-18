@@ -4,29 +4,42 @@ ViFi is a tool for detecting viral integration and fusion mRNA sequences from Ne
 
 ViFi is currently in alpha testing, is is constantly undergoing revisions.  High on the priority list is an easier installation process, as well as improve user interface.  Please report any problems/bugs to Nam Nguyen (ndn006@eng.ucsd.edu) so that ViFi can be improved and problems can be quickly corrected.  
 
-#=============================================================================================================================================================================================
 
-# Installation:
+## Installation:
+We provide instructions for installing ViFi on Linux below.  
 
-# ViFi download (if you have not already cloned this source code):
+1) ViFi download (if you have not already cloned this source code):
+```
 git clone https://github.com/namphuon/ViFi.git
-
-# Dependencies:
-## 1) Python 2.7
-## 2) Pysam verion 0.9.0 or higher (https://github.com/pysam-developers/pysam):
-sudo pip install pysam
-## 3) Samtools 1.3.1 or higher (www.htslib.org/)
-sudo apt-get install samtools
-## 4) BWA 0.7.15 or higher (bio-bwa.sourceforge.net/)
-sudo apt-get install bwa
-## 5) Install HMMER v3.1b2 and have it on the path (http://eddylab.org/software/hmmer3/3.1b2/hmmer-3.1b2-macosx-intel.tar.gz)
-
-
-# Set the ViFi directory
+```
+2) Install Dependencies:
+ 1) Python 2.7
+```
+ sudo dnf install python2
+```
+ 2) Pysam verion 0.9.0 or higher (https://github.com/pysam-developers/pysam):
+```
+ sudo pip install pysam
+```
+ 3) Samtools 1.3.1 or higher (www.htslib.org/)
+```
+ sudo apt-get install samtools
+```
+ 4) BWA 0.7.15 or higher (bio-bwa.sourceforge.net/)
+```
+ sudo apt-get install bwa
+```
+ 5) Install HMMER v3.1b2 and have it on the path (http://hmmer.org/)
+```
+ sudo apt-get install hmmer
+```
+3) Set the ViFi directory
+```
 echo export VIFI_DIR=/path/to/ViFi >> ~/.bashrc
+```
 
-# Data repositories:
-## Download the data repositories. While we include some annotations, we are unable to host some large files in the git repository.
+### Data repositories:
+### Download the data repositories. While we include some annotations, we are unable to host some large files in the git repository.
 ## These may be downloaded from https://drive.google.com/open?id=0ByYcg0axX7udUDRxcTdZZkg0X1k. Thanks to Peter Ulz for noticing incorrect link earlier.
 tar zxf data_repo.tar.gz
 echo export AA_DATA_REPO=$PWD/data_repo >> ~/.bashrc
@@ -67,3 +80,24 @@ If /home/input/ contains read1.fastq.gz and read2.fastq.gz, then
 sh docker_vifi.sh /home/input read1.fastq.gz read2.fastq.gz /home/output/ 2
 
 1. Nguyen ND, Deshpande V, Luebeck J, Mischel PS, Bafna V (2018) ViFi: accurate detection of viral integration and mRNA fusion reveals indiscriminate and unregulated transcription in proximal genomic regions in cervical cancer. Nucleic Acids Res (April):1–17.
+
+## Building evolutionary models
+
+ViFi can be run with and without evolutionary models (i.e., the HMMs).  The HMMs
+
+## Building Alignment and Tree on viral family of interest
+
+ViFi can build HMMs from any viral family if there is an existing FASTA alignment and NEWICK tree on the viral
+sequences.  Note that the sequences should be phylogenetically related to each other (i.e., do not mix HPV and HBV
+sequences).  Any standard alignment method and tree reconstruction method can be used.  In our paper, we used [PASTA](https://github.com/smirarab/pasta) to construct our alignment and tree and provide the steps in doing this below.
+Instructions on installing and running PASTA can be found [here](https://github.com/smirarab/pasta).
+
+## Building HMMs
+
+We created script to allow easy creation of the HMMs used within ViFi for a viral family of interesting.  To
+
+Requires:
+## 1) Python 2.7
+## 2) Dendropy verion 4.0.0 or higher (https://github.com/jeetsukumaran/DendroPy):
+sudo pip install dendropy
+
