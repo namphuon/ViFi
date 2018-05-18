@@ -66,6 +66,14 @@ family is provided in the [Advanced Notes](#advanced_notes) section.
 ```
 python run_vifi.py -f <input_R1.fq.gz> -r <input_R2.fq.gz> -o <output_dir>
 ```
+## ViFi Output
+
+The output of ViFi is the list of read clusters discovered, and for each read cluster, the relaxed, stringent, and exact (if split reads are present) ranges are reported, aswell as the read names of the reads in the cluster.
+
+The main output files of interest are
+- <prefix>.clusters.txt  
+- <prefix>.clusters.txt.range
+
 ## Dockerized ViFi
 
 We have also created a dockerized version of ViFi to enable easier time running.  The docker version of ViFi can be obtained
@@ -91,7 +99,7 @@ sh docker_vifi.sh /home/input read1.fastq.gz read2.fastq.gz /home/output/ 2
 
 1. Nguyen ND, Deshpande V, Luebeck J, Mischel PS, Bafna V (2018) ViFi: accurate detection of viral integration and mRNA fusion reveals indiscriminate and unregulated transcription in proximal genomic regions in cervical cancer. Nucleic Acids Res (April):1–17.
 
-# [Advanced Notes](/#advanced_notes)
+# [Advanced Notes](#advanced_notes)
 
 ## Building evolutionary models
 
