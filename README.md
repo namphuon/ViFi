@@ -57,9 +57,15 @@ any reference organism+viral family could be used.
 cat $AA_DATA_REPO//hg19/hg19full.fa $REFERENCE_REPO/hpv/hpv.unaligned.fas > $REFERENCE_REPO/hpv/hg19_hpv.fas
 bwa index $REFERENCE_REPO/hpv/hg19_hpv.fas
 ```
-## Running ViFi
-python run_vifi.py -f <input_R1.fq.gz> -r <input_R2.fq.gz> -o <output_dir>
+## Running ViFi 
 
+We show the most basic example of running ViFi below.  This version assumes that the user has
+followed all the previous steps.  More advanced options, such as using a customized reference organism/viral
+family is provided in the [Advanced Notes](#advanced_notes) section.
+
+```
+python run_vifi.py -f <input_R1.fq.gz> -r <input_R2.fq.gz> -o <output_dir>
+```
 ## Dockerized ViFi
 
 We have also created a dockerized version of ViFi to enable easier time running.  The docker version of ViFi can be obtained
@@ -84,6 +90,8 @@ If /home/input/ contains read1.fastq.gz and read2.fastq.gz, then
 sh docker_vifi.sh /home/input read1.fastq.gz read2.fastq.gz /home/output/ 2
 
 1. Nguyen ND, Deshpande V, Luebeck J, Mischel PS, Bafna V (2018) ViFi: accurate detection of viral integration and mRNA fusion reveals indiscriminate and unregulated transcription in proximal genomic regions in cervical cancer. Nucleic Acids Res (April):1–17.
+
+# [Advanced Notes](#advanced_notes)
 
 ## Building evolutionary models
 
