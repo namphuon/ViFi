@@ -71,8 +71,13 @@ python run_vifi.py -f <input_R1.fq.gz> -r <input_R2.fq.gz> -o <output_dir>
 The output of ViFi is the list of read clusters discovered, and for each read cluster, the relaxed, stringent, and exact (if split reads are present) ranges are reported, aswell as the read names of the reads in the cluster.
 
 The main output files of interest are
-- <prefix>.clusters.txt  
-- <prefix>.clusters.txt.range
+- \<prefix\>.clusters.txt
+- \<prefix\>.clusters.txt.range
+
+\<prefix\>.clusters.txt is a tab delimited file that reports the human integration range, the number of reads supporting the integration, and the number of reads mapped to the forward/reverse strand of the human region, as well as the number of viral reads mapping to the virus sequence.  It also includes the names of each discordant read supporting the integration.
+
+\<prefix\>.clusters.txt.range is a much more condensed summary of the results, showing just the integration range on the
+human reference (based upon discordant reads) and attempts to identify the exact integration point if split reads are available.
 
 ## Dockerized ViFi
 
@@ -97,6 +102,7 @@ If /home/input/ contains read1.fastq.gz and read2.fastq.gz, then
 
 sh docker_vifi.sh /home/input read1.fastq.gz read2.fastq.gz /home/output/ 2
 
+## References
 1. Nguyen ND, Deshpande V, Luebeck J, Mischel PS, Bafna V (2018) ViFi: accurate detection of viral integration and mRNA fusion reveals indiscriminate and unregulated transcription in proximal genomic regions in cervical cancer. Nucleic Acids Res (April):1–17.
 
 # [Advanced Notes](#advanced_notes)
