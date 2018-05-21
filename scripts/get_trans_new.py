@@ -66,22 +66,40 @@ parser.add_argument(
 parser.add_argument(
   '--output',
   dest='outputName',
-  help='Output BAM file of augmented trans reads between hg19 and viral',
+  help='Output BAM file of augmented trans reads between reference organism and viral sequences',
   metavar='FILE',
   action='store',
   type=str,
   nargs=1,
   )
-  
-args = parser.parse_args()
 
-bamFile = pysam.Samfile(args.dataName[0], 'rb')
-transFile = pysam.Samfile(args.transName[0], 'wb', template=bamFile)
-viralFile = pysam.Samfile(args.viralName[0], 'wb', template=bamFile)
-unknownFile = pysam.Samfile(args.unknownName[0], 'wb', template=bamFile)
+parser.add_argument(
+  '--chrom_list',
+  dest='chrom_list',
+  help='Optional file that contains list of chromosomes from reference organism.  All other sequences in the BAM file that are not in this list would be considered viral.  The file contains a single line with the space-delimited list of chromosomes belonging to the reference organism.  By default, all chromosomes starting with chr are considered human.',
+  metavar='FILE',
+  action='store',
+  type=str,
+  default = None,
+  nargs=1,
+  )
+  
+opts = parser.parse_args()
+
+bamFile = pysam.Samfile(opts.dataName[0], 'rb')
+transFile = pysam.Samfile(opts.transName[0], 'wb', template=bamFile)
+viralFile = pysam.Samfile(opts.viralName[0], 'wb', template=bamFile)
+unknownFile = pysam.Samfile(opts.unknownName[0], 'wb', template=bamFile)
+chrom_list = {}
+foo = [chrom_list.setdefault('human' if ref.find('chr') == 0 else 'viral',Set()).add(ref) for ref in bamFile.references]
+if opts.chrom_list is not None:
+  chrom_list = {}
+  input = open(opts.chrom_list[0], 'r')
+  [chrom_list.setdefault('human',Set()).add(l) for l in input.next().strip().split(' ')]
+  #[chrom_list.setdefault('viral',Set()).add(l) for l in input.next().strip().split(' ')]
 miscFile = None
-if (args.miscName is not None):
-  miscFile = pysam.Samfile(args.miscName[0], 'wb', template=bamFile)  
+if (opts.miscName is not None):
+  miscFile = pysam.Samfile(opts.miscName[0], 'wb', template=bamFile)  
 
 qname = ''
 q1ref = Set([])
@@ -89,8 +107,8 @@ q2ref = Set([])
 q1aligns = []
 q2aligns = []
 
-hg19refs = Set(map(lambda x: 'chr' + str(x), range(1, 23) + ['X', 'Y',
-         'M']))
+#hg19refs = Set(map(lambda x: 'chr' + str(x), range(1, 23) + ['X', 'Y',
+#         'M']))
 
 transReads = 0
 totalReads = 0
@@ -112,12 +130,11 @@ for a in bamFile:
     viral = False
     unknown = False
     totalReads += 1
-    # print qname, hg19refs, q1ref, q2ref, hg19refs.intersection(q1ref), hg19refs.intersection(q2ref)
     if totalReads % 100000 == 0:
       print clock(), totalReads, 'reads done: #(Trans reads) =', \
         transReads, viralReads, a.qname, qname
-    len_q1ref = len(hg19refs.intersection(q1ref))
-    len_q2ref = len(hg19refs.intersection(q2ref))
+    len_q1ref = len(chrom_list['human'].intersection(q1ref))
+    len_q2ref = len(chrom_list['human'].intersection(q2ref))
     if len_q1ref > 0 \
       and len_q2ref == 0 and len(q2ref) \
       > 0:
@@ -133,8 +150,8 @@ for a in bamFile:
     if trans == True:
       transReads += 1
       if len([b for b in q1aligns if bamFile.getrname(b.tid)
-           in hg19refs]) <= 3 or len([b for b in q2aligns
-          if bamFile.getrname(b.tid) in hg19refs]) <= 3:
+           in chrom_list['human']]) <= 3 or len([b for b in q2aligns
+          if bamFile.getrname(b.tid) in chrom_list['human']]) <= 3:
         for b in q1aligns + q2aligns:
           transFile.write(b)
     if viral == True:
@@ -143,7 +160,7 @@ for a in bamFile:
         viralFile.write(b)
     if viral == False and trans == False:
       #At least one read maps to human and at least one read is unmapped
-      if (len([read for read in q1aligns if not read.is_unmapped and bamFile.references[read.tid] in hg19refs])+len([read for read in q2aligns if not read.is_unmapped and bamFile.references[read.tid] in hg19refs])) > 0 and (len([read for read in q2aligns if read.is_unmapped]) + len([read for read in q1aligns if read.is_unmapped])) > 0:
+      if (len([read for read in q1aligns if not read.is_unmapped and bamFile.references[read.tid] in chrom_list['human']])+len([read for read in q2aligns if not read.is_unmapped and bamFile.references[read.tid] in chrom_list['human']])) > 0 and (len([read for read in q2aligns if read.is_unmapped]) + len([read for read in q1aligns if read.is_unmapped])) > 0:
         unknownReads += 1
         for b in q1aligns + q2aligns:
           seq = Counter(q1aligns[0].seq + q2aligns[0].seq)
@@ -179,8 +196,8 @@ trans = False
 viral = False
 totalReads += 1
 
-len_q1ref = len(hg19refs.intersection(q1ref))
-len_q2ref = len(hg19refs.intersection(q2ref))
+len_q1ref = len(chrom_list['human'].intersection(q1ref))
+len_q2ref = len(chrom_list['human'].intersection(q2ref))
 if len_q1ref > 0 \
   and len_q2ref == 0 and len(q2ref) \
   > 0:
@@ -196,8 +213,8 @@ if len_q2ref == 0 \
 if trans == True:
   transReads += 1
   if len([b for b in q1aligns if bamFile.getrname(b.tid)
-       in hg19refs]) <= 3 or len([b for b in q2aligns
-      if bamFile.getrname(b.tid) in hg19refs]) <= 3:
+       in chrom_list['human']]) <= 3 or len([b for b in q2aligns
+      if bamFile.getrname(b.tid) in chrom_list['human']]) <= 3:
     for b in q1aligns + q2aligns:
       transFile.write(b)
 if viral == True:
@@ -206,7 +223,7 @@ if viral == True:
     viralFile.write(b)
 if viral == False and trans == False:
   #At least one read maps to human and at least one read is unmapped
-  if (len([read for read in q1aligns if not read.is_unmapped and bamFile.references[read.tid] in hg19refs])+len([read for read in q2aligns if not read.is_unmapped and bamFile.references[read.tid] in hg19refs])) > 0 and (len([read for read in q2aligns if read.is_unmapped]) + len([read for read in q1aligns if read.is_unmapped])) > 0:
+  if (len([read for read in q1aligns if not read.is_unmapped and bamFile.references[read.tid] in chrom_list['human']])+len([read for read in q2aligns if not read.is_unmapped and bamFile.references[read.tid] in chrom_list['human']])) > 0 and (len([read for read in q2aligns if read.is_unmapped]) + len([read for read in q1aligns if read.is_unmapped])) > 0:
     unknownReads += 1
     for b in q1aligns + q2aligns:
       seq = Counter(q1aligns[0].seq + q2aligns[0].seq)
@@ -227,6 +244,3 @@ unknownFile.close()
 if miscFile is not None:
   miscFile.close()
 print totalReads, transReads, viralReads
-
-
-

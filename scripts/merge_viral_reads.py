@@ -122,11 +122,12 @@ for read in unknownFile.fetch(until_eof=True):
       read.tid = len(references['SQ'])-1
       read.is_unmapped = False
       read.pos = 1      
-      matched = int(abs(mapping[read.qname][6]-mapping[read.qname][5]))+1
-      if matched == read.qlen:
-        read.cigartuples = [(0,matched)]
-      else:
-        read.cigartuples = [(0,matched),(4,read.qlen-matched)]
+      read.cigartuples = [(0,read.qlen)]
+#       matched = int(abs(mapping[read.qname][6]-mapping[read.qname][5]))+1
+#       if matched == read.qlen:
+#         read.cigartuples = [(0,matched)]
+#       else:
+#         read.cigartuples = [(0,matched),(4,read.qlen-matched)]
     else:
       read.mate_is_unmapped = False
       read.mpos = 1      

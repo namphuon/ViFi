@@ -19,11 +19,25 @@ parser.add_argument('--data', dest='dataName',
 parser.add_argument('--output', dest='outputName',
                     help="Output text file of putative insertion positions", metavar='FILE',
                     action='store', type=str, nargs=1)
+parser.add_argument(
+  '--chrom_list',
+  dest='chrom_list',
+  help='Optional file that contains list of chromosomes from reference organism.  All other sequences in the BAM file that are not in this list would be considered viral.  The file contains a single line with the space-delimited list of chromosomes belonging to the reference organism.  By default, all chromosomes starting with chr are considered human.',
+  metavar='FILE',
+  action='store',
+  type=str,
+  default = None,
+  nargs=1,
+  )
+
 args = parser.parse_args()
 bamFile = pysam.Samfile(args.dataName[0], 'rb')
 outFile = open(args.outputName[0], 'w')
 rangeFile = open(args.outputName[0] + ".range", 'w')
 hg19refs = Set(map(lambda x: 'chr' + str(x), range(1,23) + ['X', 'Y', 'M']) + map(str, range(1,23) +  ['X', 'Y']))
+if args.chrom_list is not None:
+  input = open(args.chrom_list[0], 'r')
+  foo = [hg19refs.add(l) for l in input.next().strip().split(' ')]
 
 MIN_SUPPORT = 3
 
