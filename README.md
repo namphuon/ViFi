@@ -33,9 +33,10 @@ git clone https://github.com/namphuon/ViFi.git
    ```
    sudo apt-get install hmmer
    ```
-3. Set the ViFi directory
+3. Set the ViFi directory and include the python source to your Python path
 ```
 echo export VIFI_DIR=/path/to/ViFi >> ~/.bashrc
+echo export PYTHONPATH=/path/to/ViFi:$PYTHONPATH >> ~/.bashrc
 ```
 4. Download the data repositories:
 While we include some annotations, we are unable to host some large files in the git repository.  These may be downloaded from https://drive.google.com/open?id=0ByYcg0axX7udUDRxcTdZZkg0X1k. Thanks to Peter Ulz for noticing incorrect link earlier.
