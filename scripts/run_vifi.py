@@ -26,10 +26,9 @@ def parse_args(reference_dir):
   runningOptions.add_argument('--reference', default=default_reference, type=str,
                       help='''BWA reference (default: %s, VIRUS default is hpv)''' % default_reference)                                                                                   
   advOptions = parser.add_argument_group('Advanced options')                                              
-  advOptions.add_argument('-C', '--chromosome_list', default=None,
-                      help='Optional file that contains list of chromosomes from reference organism.  All other sequences in the BAM file that are not in this list would be considered viral.  The file contains a single line with the space-delimited list of chromosomes belonging to the reference organism.  By default, all chromosomes starting with chr are considered human.',
+  advOptions.add_argument('-C', '--chromosome_list',  dest='chromosome_list',  help='Optional file that contains list of chromosomes from reference organism.  All other sequences in the BAM file that are not in this list would be considered viral.  The file contains a single line with the space-delimited list of chromosomes belonging to the reference organism.  By default, all chromosomes starting with chr are considered human.',  metavar='FILE',  action='store',  type=str, default=None,)
   advOptions.add_argument('-b', '--bamfile', default=None,
-                      help='''Use an existing NAME SORTED bamfile that might have been aligned with a different method.  If chromosome_list option not used, will assume reference genomes start with chr (default: None)''')                      
+                      help='''Use an existing NAME SORTED bamfile that might have been aligned with a different method.  If chromosome_list option not used, will assume reference genomes start with chr (default: None)''')
   advOptions.add_argument('-l', '--hmm_list', default=None,
                       help='''List of HMMs to include in search.  Useful if user wants to search against customized list of HMMs (default: None)''')                          
   advOptions.add_argument('-d', '--disable_hmms', default=False, type=bool,
@@ -53,7 +52,7 @@ if __name__ == '__main__':
     os.system("bwa mem -t %d -M %s %s %s | samtools view -bS - > %s/%s.bam" % (options.cpus, options.reference, options.forward, options.reverse, options.output_dir, options.prefix))
     print "[Finished BWA]: %f" % (time.time()-start_time)
     options.bamfile = "%s/%s.bam" % (options.output_dir, options.prefix)
-  
+    
   #Identify transitive reads
   os.chdir(options.output_dir)
   print "[Identifying chimeric reads]: %f" % (time.time()-start_time)  

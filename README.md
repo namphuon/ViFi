@@ -52,21 +52,29 @@ unzip data.zip
 echo export REFERENCE_REPO=$PWD/data/ >> ~/.bashrc
 ```
 6.  Build a BWA index on the reference sequences from human+viral sequences:
-We show an example of building an index of human+viral sequences using Hg19 and HPV below.  However
+We show an example of building an index of human+viral sequences using Hg19 and **HPV** and **HBV** below.  However
 any reference organism+viral family could be used.
 ```
 cat $AA_DATA_REPO//hg19/hg19full.fa $REFERENCE_REPO/hpv/hpv.unaligned.fas > $REFERENCE_REPO/hpv/hg19_hpv.fas
 bwa index $REFERENCE_REPO/hpv/hg19_hpv.fas
+
+cat $AA_DATA_REPO//hg19/hg19full.fa $REFERENCE_REPO/hbv/hbv.unaligned.fas > $REFERENCE_REPO/hbv/hg19_hbv.fas
+bwa index $REFERENCE_REPO/hbv/hg19_hbv.fas
 ```
 ## Running ViFi 
 
 We show the most basic example of running ViFi below.  This version assumes that the user has
 followed all the previous steps.  More advanced options, such as using a customized reference organism/viral
-family is provided in the [Advanced Notes](#advanced_notes) section.
-
+family is provided in the [Advanced Notes][#advanced_notes] section.  
 ```
 python run_vifi.py -f <input_R1.fq.gz> -r <input_R2.fq.gz> -o <output_dir>
 ```
+
+Note that this version defaults to searching for **HPV**.  To search for HBV, run the following command.
+```
+python run_vifi.py -f <input_R1.fq.gz> -r <input_R2.fq.gz> -o <output_dir> -v hbv
+```
+
 ## ViFi Output
 
 The output of ViFi is the list of read clusters discovered, and for each read cluster, the relaxed, stringent, and exact (if split reads are present) ranges are reported, aswell as the read names of the reads in the cluster.
@@ -106,7 +114,7 @@ sh docker_vifi.sh /home/input read1.fastq.gz read2.fastq.gz /home/output/ 2
 ## References
 1. Nguyen ND, Deshpande V, Luebeck J, Mischel PS, Bafna V (2018) ViFi: accurate detection of viral integration and mRNA fusion reveals indiscriminate and unregulated transcription in proximal genomic regions in cervical cancer. Nucleic Acids Res (April):1–17.
 
-# [Advanced Notes](#advanced_notes)
+# [Advanced Notes][#advanced_notes]
 
 ## Building evolutionary models
 
