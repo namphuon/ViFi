@@ -65,7 +65,7 @@ bwa index $REFERENCE_REPO/hbv/hg19_hbv.fas
 
 We show the most basic example of running ViFi below.  This version assumes that the user has
 followed all the previous steps.  More advanced options, such as using a customized reference organism/viral
-family is provided in the [Advanced Notes][#advanced_notes] section.  
+family is provided in the [Advanced Notes](#advanced_notes) section.  
 ```
 python run_vifi.py -f <input_R1.fq.gz> -r <input_R2.fq.gz> -o <output_dir>
 ```
@@ -154,7 +154,7 @@ sh docker_vifi.sh /home/input read1.fastq.gz read2.fastq.gz /home/output/ 2
 ## References
 1. Nguyen ND, Deshpande V, Luebeck J, Mischel PS, Bafna V (2018) ViFi: accurate detection of viral integration and mRNA fusion reveals indiscriminate and unregulated transcription in proximal genomic regions in cervical cancer. Nucleic Acids Res (April):1–17.
 
-# [Advanced Notes][#advanced_notes]
+# [Advanced Notes](#advanced_notes)
 
 ## Building evolutionary models
 
