@@ -176,3 +176,15 @@ Requires:
 ## 2) Dendropy verion 4.0.0 or higher (https://github.com/jeetsukumaran/DendroPy):
 sudo pip install dendropy
 
+## Using customized reference 
+
+If you want to use a customized reference or a reference for a different organism, you can inform ViFi 
+of the reference sequences by supplying a chromosome file to ViFi using the **--chromosome_list**.  The file 
+format is a single line that has the sequence names delimited by spaces.  For example:
+
+```
+mouse_chr1 mouse_chr2
+```
+
+would inform ViFi that any other sequences found in the BAM file that does not match mouse_chr1 and mouse_chr2 are
+considered viral sequences.
