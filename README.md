@@ -85,8 +85,48 @@ The main output files of interest are
 
 \<prefix\>.clusters.txt is a tab delimited file that reports the human integration range, the number of reads supporting the integration, and the number of reads mapped to the forward/reverse strand of the human region, as well as the number of viral reads mapping to the virus sequence.  It also includes the names of each discordant read supporting the integration.
 
+Below is the sample:
+```
+#chr    minpos  maxpos  #reads  #forward        #reverse
+##================================================================
+chr19   36212224        36212932        7       4       3
+##ERR093797.9977893     chr19   36212224        True    False
+##ERR093797.7073606     chr19   36212403        True    True
+```
+
+The first line is the header information.  Afterward, each integration cluster is separated by a line
+containing **=**.  The first line of an integration cluster describes the following:
+
+1. Reference chromosome (chr19)
+2. Minimum reference position of all mapped reads belonging to that cluster (36212224)
+3. Maximum reference positions of all mapped reads belonging to that cluster (36212932)
+4. Number of read pairs belonging to this cluster (7)
+5. Number of reads mapped to the forward reference strand (4)
+6. Number of reads mapped to the forward reference strand (3)
+
+After this line, each read pair that mapped to this cluster is displayed.  The information is
+1. Read name (ERR093797.9977893)
+2. Reference chromosome (chr19)
+3. Starting read map location (36212224)
+4. Read is on the reverse strand (True)
+5. Read is read1 (False)
+
 \<prefix\>.clusters.txt.range is a much more condensed summary of the results, showing just the integration range on the
 human reference (based upon discordant reads) and attempts to identify the exact integration point if split reads are available.
+
+Below is a sample:
+```
+Chr,Min,Max,Split1,Split2
+chr19,36212564,36212564,-1,-1
+```
+
+The first line is header information.  Afterward, each line is information about the cluster.  For example,
+
+1. Reference chromosome (chr19)
+2. Minimum reference position of all mapped reads belonging to that cluster (36212224)
+3. Maximum reference positions of all mapped reads belonging to that cluster (36212932)
+4. If split read exists, minimum split read mapped range, -1 if no split read exists (-1)
+5. If split read exists, maximum split read mapped range, -1 if no split read exists (-1)
 
 ## Dockerized ViFi
 
