@@ -95,7 +95,7 @@ foo = [chrom_list.setdefault('human' if ref.find('chr') == 0 else 'viral',Set())
 if opts.chrom_list is not None:
   chrom_list = {}
   input = open(opts.chrom_list[0], 'r')
-  [chrom_list.setdefault('human',Set()).add(l) for l in input.next().strip().split(' ')]
+  [chrom_list.setdefault('human',Set()).add(l) for l in input.next().strip().split()]
   #[chrom_list.setdefault('viral',Set()).add(l) for l in input.next().strip().split(' ')]
 miscFile = None
 if (opts.miscName is not None):

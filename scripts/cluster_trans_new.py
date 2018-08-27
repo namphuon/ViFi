@@ -181,7 +181,8 @@ for v in vreads:
                 vequal.append(vset)
                 vequaldict[v] = vset
 rangeFile.write('Chr,Min,Max,Split1,Split2\n')
-outFile.write('#chr\tminpos\tmaxpos\t#reads\t#forward\t#reverse\t#viruses\tvirusnames\n')
+#outFile.write('#chr\tminpos\tmaxpos\t#reads\t#forward\t#reverse\t#viruses\tvirusnames\n')
+outFile.write('#chr\tminpos\tmaxpos\t#reads\t#forward\t#reverse\n')
 frbin = defaultdict(lambda: 0, {})
 for x in range(21):
         for y in range(21):
@@ -240,7 +241,8 @@ for ci in range(len(clusterList)):
         vplist.sort(lambda x, y: y[1] - x[1])
         frbin[cs] += 1
         outFile.write("##==========================================================================================================================================================================================================================\n")
-        outFile.write('\t'.join(map(str, [bamFile.getrname(c[0].tid), c[0].pos, c[-1].pos + c[-1].infer_query_length(), len(Set([a.qname for a in c])), cs[0], cs[1], ls[1], ls[2], len([v for v in vcount if len(vcount[v]) > 3]), len(vrep), len(cOvlList), len(cInList), len(cOutList), 1/cluster_duke35[ci], maxOvl, maxOvlc] + vplist + cOvlList + cInList + cOutList)) + '\n')
+        #outFile.write('\t'.join(map(str, [bamFile.getrname(c[0].tid), c[0].pos, c[-1].pos + c[-1].infer_query_length(), len(Set([a.qname for a in c])), cs[0], cs[1], ls[1], ls[2], len([v for v in vcount if len(vcount[v]) > 3]), len(vrep), len(cOvlList), len(cInList), len(cOutList), 1/cluster_duke35[ci], maxOvl, maxOvlc] + vplist + cOvlList + cInList + cOutList)) + '\n')   
+        outFile.write('\t'.join(map(str, [bamFile.getrname(c[0].tid), c[0].pos, c[-1].pos + c[-1].infer_query_length(), len(Set([a.qname for a in c])), cs[0], cs[1]])) + '\n')
         for a in c:
                 outFile.write('##' + '\t'.join(map(str, [a.qname, bamFile.getrname(a.tid), a.pos, not a.is_reverse, a.is_read1])) + '\n')
         for v in vcount:
@@ -263,8 +265,3 @@ print len(clusterList)
 #                print x + 1, y, frbin[cs]
 #                print x + 1, y + 1, frbin[cs]
 #        print
-    
-        
-
-
-
