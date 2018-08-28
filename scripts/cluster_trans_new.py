@@ -158,8 +158,8 @@ for a in bamFile:
                 clist = []
         caln = a
 #        if hg.interval(a, bamfile=bamFile).num_unmasked() >= 35:
-        if hg.interval(a, bamfile=bamFile).rep_content() <= 3 and a.mapq >= 10:
-            clist.append(a)
+#        if hg.interval(a, bamfile=bamFile).rep_content() <= 3 and a.mapq >= 10:
+         clist.append(a)
 if caln is not None and (a.pos > caln.pos + 300 or caln.tid != a.tid) and clean_genomic_cluster(clist):
         clusterList.append(clist)
 
