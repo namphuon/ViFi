@@ -1,10 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import pysam
+import pysam, os
 import argparse
 from time import clock
 from collections import Counter
+from distutils.version import LooseVersion
+
 
 from sets import Set
 
@@ -107,15 +109,24 @@ parser.add_argument(
 args = parser.parse_args()
 
 transFile = pysam.Samfile(args.transName[0], 'rb')
+
+#Hack to deal with pysam 0.14 or greater not being able to edit headers
+if LooseVersion(pysam.__version__) <= LooseVersion("0.13.0"):
+  references = transFile.header  
+  references['SQ'].append({'LN': 5000, 'SN': 'viral_hmm'})
+else:
+  references = transFile.header.to_dict()
+  references['SQ'].append({'LN': 5000, 'SN': 'viral_hmm'})
+  outputFile = pysam.Samfile(args.outputName[0], 'wb', header=references)
+  outputFile.close()
+  os.system('samtools reheader %s %s > %s.fixed' % (args.outputName[0], args.unknownName[0], args.unknownName[0]))
+  os.system('mv %s.fixed %s' % (args.unknownName[0], args.unknownName[0]))
+
+
 unknownFile = pysam.Samfile(args.unknownName[0], 'rb')
-
-references = transFile.header
-references['SQ'].append({'LN': 5000, 'SN': 'viral_hmm'})
-
 outputFile = pysam.Samfile(args.outputName[0], 'wb', header=references)
 scores = read_scores_file(args.reducedName[0])
 mapping = read_map(args.mapName[0], scores)  
-outputFile.header['SQ'] = references
 for read in unknownFile.fetch(until_eof=True):
   if read.qname in mapping and mapping[read.qname][1] < args.threshold:
     if read.is_unmapped:      
