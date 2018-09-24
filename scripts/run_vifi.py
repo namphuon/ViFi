@@ -45,7 +45,8 @@ if __name__ == '__main__':
      options.reference = options.reference.replace('<VIRUS>',virus)
   vifi_dir = os.environ['VIFI_DIR']
   if not os.path.exists(options.output_dir):
-    os.makedirs(options.output_dir)  
+    os.makedirs(options.output_dir)
+  options.output_dir = os.path.abspath(options.output_dir)
   #Run BWA on input FASTQ files
   if options.bamfile is None:
     print "[Running BWA]: %f" % (time.time()-start_time)
