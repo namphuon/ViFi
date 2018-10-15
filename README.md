@@ -128,6 +128,16 @@ The first line is header information.  Afterward, each line is information about
 4. If split read exists, minimum split read mapped range, -1 if no split read exists (-1)
 5. If split read exists, maximum split read mapped range, -1 if no split read exists (-1)
 
+Finally, ViFi outputs several working files that can be deleted after a run.  These are:
+1. hmms.txt - The list of HMM files used during the run
+2. \<prefix\>.bam - The aligned (name-sorted order) BAM file containing the input reads
+3. \<prefix\>.unknown.bam - A BAM file containing all paired reads in which one or both paired end reads that did not align to any known reference.  ViFi will then search these reads against the HMMs to identify any viral reads.
+4. \<prefix\>.viral.bam - A BAM file containing all paired reads that only aligned to viral references
+5. \<prefix\>.viral.cs.bam - A coordinate sorted BAM file containing all paired reads that only aligned to viral references
+6. \<prefix\>.trans.bam - A BAM file containing all paired reads in which one read aligned to the human and the other aligned to the viral reference.
+7. \<prefix\>.fixed.trans.bam - A BAM file created by merging 6. and any human/viral paired end reads discovered by running the viral HMMs on 3.
+8. \<prefix\>.fixed.trans.cs.bam - A coordinate sorted BAM file of 7.
+
 ## Dockerized ViFi
 
 We have also created a dockerized version of ViFi to enable easier time running.  The docker version of ViFi can be obtained
