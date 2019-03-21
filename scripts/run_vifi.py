@@ -1,7 +1,6 @@
 import sys, os, time
 import argparse
 import tempfile,shutil
-import hg19util as hg19
 
 
 
@@ -121,6 +120,7 @@ if __name__ == '__main__':
   if options.docker == True:
     run_docker(options)
     exit(0)
+  import hg19util as hg19
   virus=options.virus
   if options.reference.find('<VIRUS>'):
      options.reference = options.reference.replace('<VIRUS>',virus)
