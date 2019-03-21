@@ -120,8 +120,8 @@ totalaligns = 0
 for a in bamFile:
   totalaligns += 1
   if a.qname != qname and qname != '':
-    if len([b for b in q1aligns if not b.is_secondary]) != 1 \
-      or len([b for b in q2aligns if not b.is_secondary]) != 1:
+    if len([b for b in q1aligns if not b.is_secondary and not b.is_supplementary]) != 1 \
+      or len([b for b in q2aligns if not b.is_secondary and not b.is_supplementary]) != 1:
       print 'No primary alignment', a.qname
       print [(b, str(b)) for b in q1aligns if not b.is_secondary]
       print [(b, str(b)) for b in q2aligns if not b.is_secondary]

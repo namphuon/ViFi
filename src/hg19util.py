@@ -351,16 +351,21 @@ class interval(object):
         if duke35_exists[0] and len(duke35) == 0:
             try:
                 duke35file = open(duke35_filename)
-                duke35.extend([interval(l.strip()) for l in duke35file])
-                if CHR_PREFIX == True:
-                  for d in duke35:
-                    d.chrom = 'chr%s' % d.chrom if d.chrom.find('chr') == -1 else d.chrom
-                duke35.sort()
+                counter = 0
+                for l in duke35file:
+                  counter+=1
+                  if counter % 10000 == 0:
+                    print counter
+                  duke35.append(l.strip())
+                #duke35.extend([l.strip() for l in duke35file])
+                #if CHR_PREFIX == True:
+                #  for d in duke35:
+                #    d[0] = 'chr%s' % d[0] if d[0].find('chr') == -1 else d[0]
                 duke35file.close()
             except:
                 logging.warning("#TIME " + '%.3f\t'%clock() + " rep_content: Unable to open mapability file \"" + duke35_filename + "\"." )
                 duke35_exists[0] = False
-                duke35.extend(["chr_Un  0   1   1"])
+                duke35.append(["chr_Un  0   1   1"])
         # logging.info("#TIME " + '%.3f\t'%clock() + " rep_content: duke loaded")
         ictime = 0
         itime = 0
@@ -371,7 +376,7 @@ class interval(object):
             numiter += 1
             p = (hi + lo) / 2
             ctime = clock()
-            m = duke35[p]
+            m = interval(duke35[p])
             ictime += clock() - ctime
             ctime = clock()
             if s34.intersects(m) or m > s34:
@@ -380,7 +385,7 @@ class interval(object):
                 lo = p
             itime += clock() - ctime
         p = lo
-        m = duke35[p]
+        m = interval(duke35[p])
         sum_duke = 0
         len_duke = 0
         # logging.info("#TIME " + '%.3f\t'%clock() + " rep_content: found " + str(numiter) + " " + str(ictime) + " " + str(itime))
@@ -388,8 +393,9 @@ class interval(object):
             if not s34.intersects(m):
                 p += 1
                 if p >= len(duke35) or p <= 0:
+                    return 1 #Case where it is not found
                     raise Exception('p index out of range: ' + str(p)+' '+str(lo)+' '+str(self)+' '+str(m) + ' '+str(duke35[lo]))
-                m = duke35[p]
+                m = interval(duke35[p])
                 continue
             repc = 5.0 if float(m.info[0]) == 0 else 1.0 / float(m.info[0])
             sum_duke += s34.intersection(m).size() * repc
@@ -397,7 +403,7 @@ class interval(object):
             p += 1
             if p >= len(duke35):
                 break
-            m = duke35[p]
+            m = interval(duke35[p])
         # logging.info("#TIME " + '%.3f\t'%clock() + " rep_content: done")
         # exit()
         if len_duke > 0:
