@@ -19,13 +19,16 @@ use Scalar::Util qw(looks_like_number);
 use Data::Dumper;
 no strict 'refs';
 
-my $temp_dir = $ENV{'TEMP_DIR'}; 
+my $temp_dir = $ENV{'TMPDIR'}; 
 
 #Returns temp file
 sub get_temp_file {
   my $curr_temp_dir = $_[0];
   if (not defined $curr_temp_dir) {
     $curr_temp_dir = $temp_dir;
+    if (not defined $curr_temp_dir) {
+      $curr_temp_dir = '/tmp';
+    }
   }
 
   my $temp_file = $curr_temp_dir . "/". Phylo::get_random_name($curr_temp_dir);

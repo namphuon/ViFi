@@ -351,11 +351,7 @@ class interval(object):
         if duke35_exists[0] and len(duke35) == 0:
             try:
                 duke35file = open(duke35_filename)
-                counter = 0
                 for l in duke35file:
-                  counter+=1
-                  if counter % 10000 == 0:
-                    print counter
                   duke35.append(l.strip())
                 #duke35.extend([l.strip() for l in duke35file])
                 #if CHR_PREFIX == True:

@@ -106,7 +106,7 @@ def create_new_hmm_list(hmm_list_dir, hmm_list):
       name = os.path.basename(line)
       output.write("%s/%s\n" % ("/home/hmm_list/", name))
   output.close()    
-  os.system('chmod +0777 %s' % output.name)
+  os.system('chmod 0777 %s' % output.name)
   return output
 
 def run_docker(options):  
