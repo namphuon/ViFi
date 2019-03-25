@@ -4,76 +4,89 @@ ViFi is a tool for detecting viral integration and fusion mRNA sequences from Ne
 
 ViFi is currently in alpha testing, is is constantly undergoing revisions.  High on the priority list is an easier installation process, as well as improve user interface.  Please report any problems/bugs to Nam Nguyen (ndn006@eng.ucsd.edu) so that ViFi can be improved and problems can be quickly corrected.  
 
+## UPDATE
 
-## Installation:
-We provide instructions for installing ViFi on Linux below.  
+Due to major issues with incompatibilities between versions of Pysam and Samtools, Python versions, as well as issues with software compatibility between different platforms, we highly recommend that users  discontinue the use the Python version of ViFi, and instead, use the Dockerized version of ViFi.  The Dockerized version is platform independent and only requires Python (either version 2.7 or 3.0) and Docker to be installed, and no other software package is needed.  We outline below how to set up and install the Dockerized version, and how to run the Dockerized version.  
 
-1. ViFi download (if you have not already cloned this source code):
+In addition, we include a [Tutorial] for all the different options within ViFi below.  We will include instructures
+on how to run ViFi from the source code, but again, strongly discourage against this usage.
+
+## Installation of ViFi for use in Docker
+
+We provide instructions for preparing ViFi to be used for Docker below.  If Perl is installed,
+the setup.sh script can be run that will automatically perform steps 3-7.  Note that ViFi requires a large
+amount of diskspace to setup and run (10 Gb) due to the large size of the initial reference repositories.
+
+1. Install Dependencies:
+  1. Python (2.7 or 3.0; instructions for 2.7 is shown) 
+  2. Docker (https://docs.docker.com/install/)
+  
+2. Download and run setup.sh (If Perl is installed and on Mac/Linux system).
+Running this script will automatically download ViFi from GitHub, automatically download
+the repositories from Google Drive, pull the latest ViFi docker image, set all the
+environmental variables for ViFi, build the BWA index for
+hg19+HPV via Docker, and run a test run of ViFi via Docker.  It can take up to an hour for the full
+set of tests to complete and run.  Make sure you have at least 10 Gb of space free for the process to complete.
+
+```
+wget https://raw.githubusercontent.com/namphuon/ViFi/master/setup_linux_mac.sh
+sh setup_linux_mac.sh
+```
+  
+Run steps 3-7 are only necessary if Perl is not installed on the machine or on Windows machine.  If Perl is on the machine, then setup_linux_mac.sh can be run to automatically set up ViFi (see to Step 2).
+
+3. Clone the ViFi repository
 ```
 git clone https://github.com/namphuon/ViFi.git
 ```
-2. Install Dependencies:
-   1. Python 2.7
-   ```
-   sudo dnf install python2
-   ```
-   2. Pysam verion 0.9.0 or higher (https://github.com/pysam-developers/pysam):
-   ```
-   sudo pip install pysam
-   ```
-   3. Samtools 1.3.1 or higher (www.htslib.org/)
-   ```
-   sudo apt-get install samtools
-   ```
-   4. BWA 0.7.15 or higher (bio-bwa.sourceforge.net/)
-   ```
-   sudo apt-get install bwa
-   ```
-   5. Install HMMER v3.1b2 and have it on the path (http://hmmer.org/)
-   ```
-   sudo apt-get install hmmer
-   ```
-3. Set the ViFi directory and include the python source to your Python path
+
+4. Set the ViFi directory and include the python source to your Python path
 ```
 echo export VIFI_DIR=/path/to/ViFi >> ~/.bashrc
 echo export PYTHONPATH=/path/to/ViFi:/path/to/ViFi/src:$PYTHONPATH >> ~/.bashrc
 ```
-4. Download the data repositories:
+5. Download the data repositories:
 While we include some annotations, we are unable to host some large files in the git repository.  These may be downloaded from https://drive.google.com/open?id=0ByYcg0axX7udUDRxcTdZZkg0X1k. Thanks to Peter Ulz for noticing incorrect link earlier.
 ```
 tar zxf data_repo.tar.gz
 echo export AA_DATA_REPO=$PWD/data_repo >> ~/.bashrc
 source ~/.bashrc
 ```
-5. Download the HMM models:
+6. Download the HMM models:
 We have pre-build HMM models for HPV and HBV.  They can be downloaded from https://drive.google.com/open?id=0Bzp6XgpBhhghSTNMd3RWS2VsVXM.
 ```
 unzip data.zip
 echo export REFERENCE_REPO=$PWD/data >> ~/.bashrc
 ```
-6.  Build a BWA index on the reference sequences from human+viral sequences:
+7.  Build a BWA index on the reference sequences from human+viral sequences:
 We show an example of building an index of human+viral sequences using Hg19 and **HPV** and **HBV** below.  However
 any reference organism+viral family could be used.
 ```
 cat $AA_DATA_REPO//hg19/hg19full.fa $REFERENCE_REPO/hpv/hpv.unaligned.fas > $REFERENCE_REPO/hpv/hg19_hpv.fas
 bwa index $REFERENCE_REPO/hpv/hg19_hpv.fas
-
 cat $AA_DATA_REPO//hg19/hg19full.fa $REFERENCE_REPO/hbv/hbv.unaligned.fas > $REFERENCE_REPO/hbv/hg19_hbv.fas
 bwa index $REFERENCE_REPO/hbv/hg19_hbv.fas
-```
-## Running ViFi 
+```  
 
-We show the most basic example of running ViFi below.  This version assumes that the user has
-followed all the previous steps.  More advanced options, such as using a customized reference organism/viral
-family is provided in the [Advanced Notes](#advanced_notes) section.  
+## Dockerized ViFi (RECOMMENDED)
+
+We have also created a dockerized version of ViFi to enable easier time running (see previous section for installation and setup).  To get the latest version of the Dockerized ViFo, run:
 ```
-python run_vifi.py -f <input_R1.fq.gz> -r <input_R2.fq.gz> -o <output_dir>
+docker pull namphuon/vifi
 ```
 
-Note that this version defaults to searching for **HPV**.  To search for HBV, run the following command.
+To run the dockerized version of ViFi, first create the data repositories as above, including setting the environmental variables.  Next, run the following command:
+
+`python $VIFI_DIR/scripts/run_vifi.py -f <READ1> -r <READ2> --docker`
+
+where <READ1> and <READ2> are the FASTQ files (gzipped or unzipped).  Note that the $VIFI_DIR, $AA_DATA_REPO and $REFERENCE_REPO variables must be set in order for the script to find the necessary files.  
+
+Example (assuming that $VIFI_DIR is set):
+
 ```
-python run_vifi.py -f <input_R1.fq.gz> -r <input_R2.fq.gz> -o <output_dir> -v hbv
+python $VIFI_DIR/scripts/run_vifi.py -f $VIFI_DIR/test/data/test_R1.fq.gz -r $VIFI_DIR/test/data/test_R2.fq.gz  --docker
 ```
+
 
 ## ViFi Output
 
@@ -138,28 +151,76 @@ Finally, ViFi outputs several working files that can be deleted after a run.  Th
 7. \<prefix\>.fixed.trans.bam - A BAM file created by merging 6. and any human/viral paired end reads discovered by running the viral HMMs on 3.
 8. \<prefix\>.fixed.trans.cs.bam - A coordinate sorted BAM file of 7.
 
-## Dockerized ViFi
 
-We have also created a dockerized version of ViFi to enable easier time running.  The docker version of ViFi can be obtained
-by installing Docker (https://www.docker.com/), and running the following command:
+## Installation (Depreciated):
+We provide instructions for installing ViFi on Linux below.  
 
-docker pull namphuon/vifi
+1. ViFi download (if you have not already cloned this source code):
+```
+git clone https://github.com/namphuon/ViFi.git
+```
+2. Install Dependencies:
+   1. Python 2.7
+   ```
+   sudo dnf install python2
+   ```
+   2. Pysam verion 0.9.0 or higher (https://github.com/pysam-developers/pysam):
+   ```
+   sudo pip install pysam
+   ```
+   3. Samtools 1.3.1 or higher (www.htslib.org/)
+   ```
+   sudo apt-get install samtools
+   ```
+   4. BWA 0.7.15 or higher (bio-bwa.sourceforge.net/)
+   ```
+   sudo apt-get install bwa
+   ```
+   5. Install HMMER v3.1b2 and have it on the path (http://hmmer.org/)
+   ```
+   sudo apt-get install hmmer
+   ```
+3. Set the ViFi directory and include the python source to your Python path
+```
+echo export VIFI_DIR=/path/to/ViFi >> ~/.bashrc
+echo export PYTHONPATH=/path/to/ViFi:/path/to/ViFi/src:$PYTHONPATH >> ~/.bashrc
+```
+4. Download the data repositories:
+While we include some annotations, we are unable to host some large files in the git repository.  These may be downloaded from https://drive.google.com/open?id=0ByYcg0axX7udUDRxcTdZZkg0X1k. Thanks to Peter Ulz for noticing incorrect link earlier.
+```
+tar zxf data_repo.tar.gz
+echo export AA_DATA_REPO=$PWD/data_repo >> ~/.bashrc
+source ~/.bashrc
+```
+5. Download the HMM models:
+We have pre-build HMM models for HPV and HBV.  They can be downloaded from https://drive.google.com/open?id=0Bzp6XgpBhhghSTNMd3RWS2VsVXM.
+```
+unzip data.zip
+echo export REFERENCE_REPO=$PWD/data >> ~/.bashrc
+```
+6.  Build a BWA index on the reference sequences from human+viral sequences:
+We show an example of building an index of human+viral sequences using Hg19 and **HPV** and **HBV** below.  However
+any reference organism+viral family could be used.
+```
+cat $AA_DATA_REPO//hg19/hg19full.fa $REFERENCE_REPO/hpv/hpv.unaligned.fas > $REFERENCE_REPO/hpv/hg19_hpv.fas
+bwa index $REFERENCE_REPO/hpv/hg19_hpv.fas
 
-To run the dockerized version of ViFi, first create the data repositories as above, including setting the environmental variables. 
-Next, run the following script in the ViFi scripts directory:
+cat $AA_DATA_REPO//hg19/hg19full.fa $REFERENCE_REPO/hbv/hbv.unaligned.fas > $REFERENCE_REPO/hbv/hg19_hbv.fas
+bwa index $REFERENCE_REPO/hbv/hg19_hbv.fas
+```
+## Running ViFi  (Depreciated)
 
-`docker_vifi.sh <INPUT_DIR> <READ1>  <READ2>  <OUTPUT>  <CPUS>` 
+We show the most basic example of running ViFi below.  This version assumes that the user has
+followed all the previous steps.  More advanced options, such as using a customized reference organism/viral
+family is provided in the [Advanced Notes](#advanced_notes) section.  
+```
+python run_vifi.py -f <input_R1.fq.gz> -r <input_R2.fq.gz> -o <output_dir>
+```
 
-where <INPUT_DIR> is the directory containing the <READ1> and <READ2> files, and <CPUS> is the number of
-CPUs to use.  Note that the full path must
-be given for the input and output directory, and the $AA_DATA_REPO and $REFERENCE_REPO variables must be
-set in order for the script to find the necessary files.  
-
-Example:
-
-If /home/input/ contains read1.fastq.gz and read2.fastq.gz, then
-
-sh docker_vifi.sh /home/input read1.fastq.gz read2.fastq.gz /home/output/ 2
+Note that this version defaults to searching for **HPV**.  To search for HBV, run the following command.
+```
+python run_vifi.py -f <input_R1.fq.gz> -r <input_R2.fq.gz> -o <output_dir> -v hbv
+```
 
 ## References
 1. Nguyen ND, Deshpande V, Luebeck J, Mischel PS, Bafna V (2018) ViFi: accurate detection of viral integration and mRNA fusion reveals indiscriminate and unregulated transcription in proximal genomic regions in cervical cancer. Nucleic Acids Res (April):1–17.
