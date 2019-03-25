@@ -18,17 +18,15 @@ source ~/.bashrc
 
 #Set up reference for alignment
 cat $AA_DATA_REPO//hg19/hg19full.fa $REFERENCE_REPO/hpv/hpv.unaligned.fas > $REFERENCE_REPO/hpv/hg19_hpv.fas
-docker run -v $REFERENCE_REPO/hpv/:/home/hpv/ docker.io/namphuon/vifi bwa index /home/hpv/hg19_hpv.fa
-#bwa index $REFERENCE_REPO/hpv/hg19_hpv.fas
-ls $VIFI_DIR/data/hpv/hmms/hmmbuild.[0-9].hmm > $VIFI_DIR/data/hpv/hmms/hmms.txt
-source ~/.bashrc
 
 #Pull the Docker file
 docker pull docker.io/namphuon/vifi 
 
-#Run ViFi under docker mode
+docker run -v $REFERENCE_REPO/hpv/:/home/hpv/ docker.io/namphuon/vifi bwa index /home/hpv/hg19_hpv.fa
+
+#Build reduced list of HMMs for testing
+ls $VIFI_DIR/data/hpv/hmms/hmmbuild.[0-9].hmm > $VIFI_DIR/data/hpv/hmms/hmms.txt
+source ~/.bashrc
+
+#Run ViFi under docker mode on test dataset on reduced HMM list set
 python $VIFI_DIR/scripts/run_vifi.py --cpus 2 --hmm_list $VIFI_DIR/data/hpv/hmms/hmms.txt -f $VIFI_DIR/test/data/test_R1.fq.gz -r $VIFI_DIR/test/data/test_R2.fq.gz -o $VIFI_DIR/tmp/docker/ --docker
-
-
-
-
