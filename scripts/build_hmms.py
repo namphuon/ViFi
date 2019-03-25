@@ -62,8 +62,8 @@ parser.add_argument('--output_dir', dest='output_dir',
 parser.add_argument('--prefix', dest='prefix',
                     help="prefix used to name HMM files (default=viral)", metavar='PREFIX', default = 'viral',
                     action='store', type=str)
-parser.add_argument('--max_size', dest='max_size',
-                    help="Maximum subtree size to decompose (default=10)", metavar='MAX_SIZE', default = 10,
+parser.add_argument('--max_size_fraction', dest='max_size',
+                    help="Maximum fraction of total size to decompose (default=.10)", metavar='MAX_SIZE', default = 0.10,
                     action='store', type=int)
 parser.add_argument('--keep_alignment', dest='keep_alignment',
                     help="Keep temporary ", default = False,
@@ -76,6 +76,7 @@ arg = parser.parse_args()
 tree = Tree.get(file=open(arg.tree_file, 'r'), schema="newick", preserve_underscores=True)
 tree_map = {}
 print "Decomposing Tree"
-decompose_tree(tree, arg.max_size, tree_map = tree_map, decomposition=arg.decomposition)
+max_size = max(10, int(arg.max_size*len(tree.leaf_nodes())))
+decompose_tree(tree, max_size, tree_map = tree_map, decomposition=arg.decomposition)
 print "Building HMMs"
 build_hmms(tree_map, arg.alignment_file, arg.output_dir, arg.prefix, arg.keep_alignment)

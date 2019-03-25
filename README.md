@@ -151,8 +151,38 @@ Finally, ViFi outputs several working files that can be deleted after a run.  Th
 7. \<prefix\>.fixed.trans.bam - A BAM file created by merging 6. and any human/viral paired end reads discovered by running the viral HMMs on 3.
 8. \<prefix\>.fixed.trans.cs.bam - A coordinate sorted BAM file of 7.
 
+## References
+1. Nguyen ND, Deshpande V, Luebeck J, Mischel PS, Bafna V (2018) ViFi: accurate detection of viral integration and mRNA fusion reveals indiscriminate and unregulated transcription in proximal genomic regions in cervical cancer. Nucleic Acids Res (April):1–17.
 
-## Installation (Depreciated):
+# [Advanced Notes](#advanced_notes)
+
+## Building evolutionary models
+
+ViFi can be run with and without evolutionary models (i.e., the HMMs).  We outline the steps in building the HMMs below.  However, we also include a Docker pipeline that will automatically build the HMMs for the users to use.  The pipeline only requires docker to be installed for use.
+
+## Using Docker pipeline to build HMMs for use in ViFi
+The following command will create HMMs from a set of unaligned sequences.  The sequences are assumed to share a common viral ancestor (i.e., don't mix viral families together when running the pipeline).  
+
+```
+bash $VIFI_DIR/scripts/build_references.sh <INPUT_SEQ> <OUTPUT_DIR> <PREFIX>
+```
+
+The output in the OUTPUT_DIR folder will be a set of HMMs (suffix with *.hmmbuild) and a file containing the list of HMMs.
+ 
+## Using customized reference 
+
+If you want to use a customized reference or a reference for a different organism, you can inform ViFi 
+of the reference sequences by supplying a chromosome file to ViFi using the **--chromosome_list**.  The file 
+format is a single line that has the sequence names delimited by spaces.  For example:
+
+```
+mouse_chr1 mouse_chr2
+```
+
+would inform ViFi that any other sequences found in the BAM file that does not match mouse_chr1 and mouse_chr2 are
+considered viral sequences.
+
+## Installation from source code (Depreciated):
 We provide instructions for installing ViFi on Linux below.  
 
 1. ViFi download (if you have not already cloned this source code):
@@ -221,41 +251,3 @@ Note that this version defaults to searching for **HPV**.  To search for HBV, ru
 ```
 python run_vifi.py -f <input_R1.fq.gz> -r <input_R2.fq.gz> -o <output_dir> -v hbv
 ```
-
-## References
-1. Nguyen ND, Deshpande V, Luebeck J, Mischel PS, Bafna V (2018) ViFi: accurate detection of viral integration and mRNA fusion reveals indiscriminate and unregulated transcription in proximal genomic regions in cervical cancer. Nucleic Acids Res (April):1–17.
-
-# [Advanced Notes](#advanced_notes)
-
-## Building evolutionary models
-
-ViFi can be run with and without evolutionary models (i.e., the HMMs).  The HMMs
-
-## Building Alignment and Tree on viral family of interest
-
-ViFi can build HMMs from any viral family if there is an existing FASTA alignment and NEWICK tree on the viral
-sequences.  Note that the sequences should be phylogenetically related to each other (i.e., do not mix HPV and HBV
-sequences).  Any standard alignment method and tree reconstruction method can be used.  In our paper, we used [PASTA](https://github.com/smirarab/pasta) to construct our alignment and tree and provide the steps in doing this below.
-Instructions on installing and running PASTA can be found [here](https://github.com/smirarab/pasta).
-
-## Building HMMs
-
-We created script to allow easy creation of the HMMs used within ViFi for a viral family of interesting.  To
-
-Requires:
-## 1) Python 2.7
-## 2) Dendropy verion 4.0.0 or higher (https://github.com/jeetsukumaran/DendroPy):
-sudo pip install dendropy
-
-## Using customized reference 
-
-If you want to use a customized reference or a reference for a different organism, you can inform ViFi 
-of the reference sequences by supplying a chromosome file to ViFi using the **--chromosome_list**.  The file 
-format is a single line that has the sequence names delimited by spaces.  For example:
-
-```
-mouse_chr1 mouse_chr2
-```
-
-would inform ViFi that any other sequences found in the BAM file that does not match mouse_chr1 and mouse_chr2 are
-considered viral sequences.
