@@ -20,9 +20,9 @@ echo export VIFI_DIR=$VIFI_DIR >> ~/.bashrc
 echo export AA_DATA_REPO=$PWD/data_repo >> ~/.bashrc
 echo export REFERENCE_REPO=$PWD/data >> ~/.bashrc
 
-VIFI_DIR=$VIFI_DIR
-AA_DATA_REPO=$PWD/data_repo
-REFERENCE_REPO=$PWD/data
+export VIFI_DIR=$VIFI_DIR
+export AA_DATA_REPO=$PWD/data_repo
+export REFERENCE_REPO=$PWD/data
 
 source ~/.bashrc
 
