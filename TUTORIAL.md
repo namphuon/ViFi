@@ -14,9 +14,10 @@ We provide a brief tutorial on how to run ViFi and outline the different options
 
 ### ViFi Structure
 
-In this section, we outline the key components of ViFi.  First, ViFi requires a reference directory in order to function.  We point to the location of this directory using the $REFERENCE_REPO environmental variable.  Within this directory, the viral families of interest are separated out by directory.  For example, the default directory contains the following folders:
+In this section, we outline the key components of ViFi.  First, ViFi requires a reference directory in order to function.  We point to the location of this directory using the $REFERENCE_REPO environmental variable.  Within this directory, the viral families of interest are separated out by directory.  For example, if one lists the folders in the $REFERENCE_REPO, the result would be:
 
 ```
+>ls $REFERENCE_REPO
 hpv
 hbv
 ```
