@@ -12,9 +12,6 @@ then
 fi 
 INPUT_NAME=`basename $INPUT_FASTA`
 
-#Pull latest version of PASTA
-docker pull smirarab/pasta
-
 #Build alignment/tree, use 4GB for alignment, via Docker
 docker run -v $INPUT_DIR/:/data/ -v $OUTPUT_DIR/:/output/ smirarab/pasta run_pasta.py  --max-mem-mb=4000 -d dna -j $PREFIX -i $INPUT_NAME  -o /output/
 
