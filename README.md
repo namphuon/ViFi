@@ -4,7 +4,7 @@ ViFi is a tool for detecting viral integration and fusion mRNA sequences from Ne
 
 ViFi is currently in alpha testing, is is constantly undergoing revisions.  High on the priority list is an easier installation process, as well as improve user interface.  Please report any problems/bugs to Nam Nguyen (ndn006@eng.ucsd.edu) so that ViFi can be improved and problems can be quickly corrected.  
 
-## UPDATE
+## ***UPDATE****
 
 Due to major issues with incompatibilities between versions of Pysam and Samtools, Python versions, as well as issues with software compatibility between different platforms, we highly recommend that users  discontinue the use the Python version of ViFi, and instead, use the Dockerized version of ViFi.  The Dockerized version is platform independent and only requires Python (either version 2.7 or 3.0) and Docker to be installed, and no other software package is needed.  We outline below how to set up and install the Dockerized version, and how to run the Dockerized version.  
 
@@ -68,7 +68,7 @@ cat $AA_DATA_REPO//hg19/hg19full.fa $REFERENCE_REPO/hbv/hbv.unaligned.fas > $REF
 bwa index $REFERENCE_REPO/hbv/hg19_hbv.fas
 ```  
 
-## Dockerized ViFi (RECOMMENDED)
+## Running ViFi using Docker (RECOMMENDED)
 
 We have also created a dockerized version of ViFi to enable easier time running (see previous section for installation and setup).  To get the latest version of the Dockerized ViFo, run:
 ```
