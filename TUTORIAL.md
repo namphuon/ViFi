@@ -2,10 +2,14 @@
 
 We provide a brief tutorial on how to run ViFi and outline the different options below.  If there are further questions, please email Nam-phuong Nguyen (ndn006@eng.ucsd.edu) and we will update the tutorial with additional examples.  This tutorial assumes that Docker has been installed and ViFi has been downloaded.
 
-[ViFi Structure](#ViFi Structure)
+[ViFi Structure](#vifi-structure)
+
 [Running ViFi to detect HPV integration from known strains](#Running-ViFi-to-detect-HPV-integration-from-known-strains)
+
 [Running ViFi to detect HPV integration from novel strains](#Running-ViFi-to-detect-HPV-integration-from-novel-strains)
+
 [Building reference package for different viral family](#Building-reference-package-for-different-viral-family)
+
 [ViFi Output](#vifi-output)
 
 ### ViFi Structure
@@ -17,7 +21,14 @@ hpv
 hbv
 ```
 
-When one runs ViFi, the default virus is hpv, however, if the user specifies a different virus name (such as ebv), ViFi will assume that there is a folder with the same name within the $REFERENCE_REPO directory.  Within this folder, there several key files that ViFi expects to exist.  First, is a BWA index of the set of sequences from the human and viral references.  By default, the naming convention is hg19_<virus_name>.fas.  
+When one runs ViFi, the default virus is hpv, however, if the user specifies a different virus name (such as ebv), ViFi will assume that there is a folder with the same name within the $REFERENCE_REPO directory.  Within this folder, there several key files that ViFi expects to exist.  First, is a BWA index of the set of sequences from the human and viral references.  By default, the naming convention is hg19_<virus_name>.fas.  The second thing that ViFi expects to exist is a folder called hmms (if one plans on using viral hmms).  ViFi will automatically search this folder for HMMs when running ViFi with the HMM option.  Any file with the suffix *.hmmbuild will be used within the viral search.
+
+Thus, if the user wants to create a new viral family to search for, the user needs to:
+
+1. Create a folder with <virus_name> in the $REFERENCE_REPO directory.
+2. Create a FASTA file containing the human and viral sequences of interest and name it hg19_<virus_name>.fas
+3. Run BWA index on the FASTA file
+4. Create a folder called hmms within the $REFERENCE_REPO and run the build_references.sh on just the viral sequences to automatically build the HMMs.
 
 ### Running ViFi to detect HPV integration from novel strains
 
