@@ -235,7 +235,8 @@ if viral == False and trans == False:
       seq = Counter(q1aligns[0].seq + q2aligns[0].seq)
       if 'N' in seq and seq['N'] >= 5:
         continue
-      miscFile.write(b)
+      if (miscFile is not None):
+        miscFile.write(b)
 
 transFile.close()
 bamFile.close()
