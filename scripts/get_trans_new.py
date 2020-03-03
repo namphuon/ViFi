@@ -230,7 +230,7 @@ if viral == False and trans == False:
       if 'N' in seq and seq['N'] >= 5:
         continue
       unknownFile.write(b)
-  if (miscFile is not None and len([read for read in q2aligns if read.is_unmapped]) + len([read for read in q1aligns if read.is_unmapped])) == 0:
+  if miscFile is not None and (len([read for read in q2aligns if read.is_unmapped]) + len([read for read in q1aligns if read.is_unmapped])) == 0:
     for b in q1aligns + q2aligns:
       seq = Counter(q1aligns[0].seq + q2aligns[0].seq)
       if 'N' in seq and seq['N'] >= 5:
