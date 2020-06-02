@@ -115,7 +115,7 @@ containing **=**.  The first line of an integration cluster describes the follow
 3. Maximum reference positions of all mapped reads belonging to that cluster (36212932)
 4. Number of read pairs belonging to this cluster (7)
 5. Number of reads mapped to the forward reference strand (4)
-6. Number of reads mapped to the forward reference strand (3)
+6. Number of reads mapped to the reverse reference strand (3)
 
 After this line, each read pair that mapped to this cluster is displayed.  The information is
 1. Read name (ERR093797.9977893)
