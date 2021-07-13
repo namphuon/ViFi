@@ -1,10 +1,15 @@
+## ***UPDATE***
+
+Please switch over to FastViFi (https://github.com/sara-javadzadeh/FastViFi).  ViFi is no longer under active development and is discontinued
+
+
 # ViFi
 
 ViFi is a tool for detecting viral integration and fusion mRNA sequences from Next Generation Sequencing data.  Unlike standard approaches that use reference-based read mapping for identification of viral reads, ViFi uses both reference-based read mapping and a phylogenetic-based approach to identify viral reads.  ViFi also incorporates mappability scores of the reads to filter out false positive integration detection.  The end result is a tool that can accurately and precisely detect integrated viruses, even if the viruses are highly mutated or novel strains.
 
-ViFi is currently in alpha testing, is is constantly undergoing revisions.  High on the priority list is an easier installation process, as well as improve user interface.  Please report any problems/bugs to Nam Nguyen (ndn006@eng.ucsd.edu) so that ViFi can be improved and problems can be quickly corrected.  
+ViFi is currently in alpha testing, is is constantly undergoing revisions.  High on the priority list is an easier installation process, as well as improve user interface.  Please report any problems/bugs to Nam Nguyen (namphuon@utexas.edu) so that ViFi can be improved and problems can be quickly corrected.  
 
-## ***UPDATE****
+## ***UPDATE***
 
 Due to major issues with incompatibilities between versions of Pysam and Samtools, Python versions, as well as issues with software compatibility between different platforms, we highly recommend that users  discontinue the use the Python version of ViFi, and instead, use the Dockerized version of ViFi.  The Dockerized version is platform independent and only requires Python (either version 2.7 or 3.0) and Docker to be installed, and no other software package is needed.  We outline below how to set up and install the Dockerized version, and how to run the Dockerized version.  
 
@@ -87,6 +92,7 @@ Example (assuming that $VIFI_DIR is set):
 python $VIFI_DIR/scripts/run_vifi.py -f $VIFI_DIR/test/data/test_R1.fq.gz -r $VIFI_DIR/test/data/test_R2.fq.gz  --docker
 ```
 
+Note that because BAM files can be large (typically 100 Gb in size for 30x coverage) and the hg19+hpv reference genome is large (more than 3 Gb in size), Docker requires a lot of memory to run, as BWA requires a lot of memory.  If running Docker on Mac or Windows, you may have to allocate more memory to Docker before r
 
 ## ViFi Output
 
