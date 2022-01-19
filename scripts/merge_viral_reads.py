@@ -117,7 +117,7 @@ if LooseVersion(pysam.__version__) <= LooseVersion("0.13.0"):
 else:
   references = transFile.header.to_dict()
   references['SQ'].append({'LN': 5000, 'SN': 'viral_hmm'})
-  outputFile = pysam.Samfile(args.outputName[0], 'wb', header=references)
+  outputFile = pysam.Samfile(args.outputName[0], 'w', header=references)
   outputFile.close()
   os.system('samtools reheader %s %s > %s.fixed' % (args.outputName[0], args.unknownName[0], args.unknownName[0]))
   os.system('mv %s.fixed %s' % (args.unknownName[0], args.unknownName[0]))
